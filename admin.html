@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Appointment List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #eeeeee;
+            padding: 20px;
+            height: 100vh;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #d6d6d6;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .search-box {
+            float: right;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div><strong>Rural Health Unit I</strong></div>
+        <button>Logout</button>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <a href="appointment.html">
+                    <li class="active">Appointments</li>
+                </a>
+                <a href="ad pending.html">
+                    <li>Pending Accounts</li>
+                </a>
+                <a href="ad available serv.html">
+                    <li>Available Services</li>
+                </a>
+                <a href="ad sched.html">
+                    <li>Schedules</li>
+                </a>
+                <a href="ad services.html">
+                    <li>Services</li>
+                </a>
+                <a href="ad report.html">
+                    <li>Report</li>
+                </a>
+                <a href="ad sched and slot.html">
+                    <li>Schedules and Slots</li>
+                </a>
+            </ul>
+        </div>
+        <div class="content">
+            <h2>Appointment Lists</h2>
+            <div class="search-box">
+                Search: <input type="text">
+            </div>
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Name</th>
+                    <th>Reason/s</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td colspan="7" style="text-align: center;">No Data Available</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

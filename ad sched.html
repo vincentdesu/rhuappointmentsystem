@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rural Health Unit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background-color: #2c7c3f;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header img {
+            width: 30px;
+            margin-right: 10px;
+        }
+
+        .logout {
+            background-color: #49b5ff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: auto;
+            cursor: pointer;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #eeeeee;
+            padding: 20px;
+            height: 100vh;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li:hover,
+        .sidebar ul li.active {
+            background: #cccccc;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .box {
+            background: #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .save-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #2c7c3f;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* General container styling */
+        .container {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            padding: 20px;
+            color: white;
+            height: 100vh;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar ul a:hover {
+            background-color: #34495e;
+        }
+
+        .sidebar ul a .active {
+            background-color: #1abc9c;
+        }
+
+        /* Content section styling */
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #ecf0f1;
+        }
+
+        .content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Textarea box styling */
+        .box {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 400px;
+            font-size: 14px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1abc9c;
+        }
+
+        /* Save button styling */
+        .save-btn {
+            background-color: #1abc9c;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background-color: #16a085;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="logo.png" alt="Logo">
+        <span>Rural Health Unit I</span>
+        <span class="logout">Logout</span>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <a href="appointment.html">
+                    <li>Appointments</li>
+                </a>
+                <a href="ad pending.html">
+                    <li>Pending Accounts</li>
+                </a>
+                <a href="ad available serv.html">
+                    <li>Available Services</li>
+                </a>
+                <a href="ad sched.html">
+                    <li class="active">Schedules</li>
+                </a>
+                <a href="ad services.html">
+                    <li>Services</li>
+                </a>
+                <a href="ad report.html">
+                    <li>Report</li>
+                </a>
+                <a href="ad sched and slot.html">
+                    <li>Schedules and Slots</li>
+                </a>
+            </ul>
+        </div>
+        <div id="appointments" class="content">
+            <h2>Available Services</h2>
+            <form>
+                <div class="box">
+                    <textarea id="message" name="message" rows="30" cols="200" placeholder="Write your message here...">Check up - Monday and Friday
+Animal Bite - Monday to Friday
+Dental Cares - Monday, Wednesday, Friday
+TB Dots - Fridays</textarea>
+                </div>
+                <div class="save-btn">Save</div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

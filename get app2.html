@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rural Health Unit I Appointment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            text-align: center;
+            background: url('bg.png') center/cover no-repeat;
+            /* Body background image */
+            min-height: 100vh;
+            /* Ensure the body fills the entire viewport */
+            color: #333;
+        }
+
+        .header {
+            background-color: #2E7D32;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header img {
+            height: 50px;
+            width: auto;
+            margin-left: 15px;
+        }
+
+        .header nav {
+            text-align: right;
+            flex-grow: 1;
+            animation: slideRightToLeft 1s ease-in-out;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            color: #C8E6C9;
+            transform: scale(1.1);
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            background: url('bg.png') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(46, 125, 50, 0.7);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            position: relative;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .appointment-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s, background-color 0.3s;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .appointment-btn:hover {
+            transform: scale(1.1);
+            background-color: #388E3C;
+        }
+
+        .footer {
+            background-color: #2E7D32;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .footer p {
+            animation: slideUp 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideRightToLeft {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .services {
+            padding: 50px 20px;
+            color: #333;
+            background: rgba(46, 125, 50, 0.7);
+            /* Light white background with transparency */
+            min-height: 800px;
+            max-height: 1000px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .services-box {
+            background-color: white;
+            /* White background for the box */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            /* Make the box width responsive */
+            max-width: 1200px;
+            /* Maximum width of the box */
+        }
+
+        .services h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: white;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .service-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .service-box p {
+            background-color: #ffffff;
+            border: 2px solid #2E7D32;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1.2rem;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .service-box p strong {
+            font-weight: bold;
+            color: #2E7D32;
+        }
+
+        .service-box p:hover {
+            background-color: #E8F5E9;
+            transform: scale(1.05);
+        }
+
+        .service-box p:not(:last-child) {
+            margin-bottom: 15px;
+        }
+
+        /* General table styling */
+        table {
+            width: 80%;
+            /* You can adjust this value as needed */
+            margin: 0 auto;
+            /* This centers the table horizontally */
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Other existing table styles (No changes here) */
+        th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        button {
+            padding: 5px 10px;
+            font-size: 1rem;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        /* Add arrow indicators to header */
+        th:after {
+            content: ' ▼';
+            /* Default to descending arrow */
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+
+        th.asc:after {
+            content: ' ▲';
+            /* Ascending arrow */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="logo.png" alt="Logo">
+        <nav>
+            <a href="home.html">HOME</a> |
+            <a href="available service.html">AVAILABLE DOCTORS</a> |
+            <a href="schedules.html">SCHEDULES</a> |
+            <a href="services.html">SERVICES</a> |
+            <a href="get app.html">GET APPOINTMENT</a> |
+            <a href="get app2.html">VIEW APPOINTMENT</a> |
+            <a href="login.html">LOGOUT</a>
+        </nav>
+    </div>
+    <div class="services">
+        <h1>View Appointment/s</h1>
+
+        <table id="appointmentTable" border="1" cellpadding="10" cellspacing="0"
+            style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Full Name</th>
+                    <th onclick="sortTable(1)">Date Schedule</th>
+                    <th onclick="sortTable(2)">Time Schedule</th>
+                    <th onclick="sortTable(3)">Service</th>
+                    <th onclick="sortTable(4)">Status</th>
+                    <th>Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>2025-02-15</td>
+                    <td>9:00 AM</td>
+                    <td>Check Up</td>
+                    <td>Pending</td>
+                    <td><button>View</button> <button>Cancel</button></td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>2025-02-16</td>
+                    <td>10:00 AM</td>
+                    <td>Dental Cares</td>
+                    <td>Confirmed</td>
+                    <td><button>View</button> <button>Cancel</button></td>
+                </tr>
+                <tr>
+                    <td>Michael Johnson</td>
+                    <td>2025-02-17</td>
+                    <td>11:00 AM</td>
+                    <td>Animal Bites</td>
+                    <td>Completed</td>
+                    <td><button>View</button> <button>Cancel</button></td>
+                </tr>
+                <!-- More rows can be added here -->
+            </tbody>
+        </table>
+
+    </div>
+    <footer>
+        <div class="footer">
+            <p>ALL RIGHTS RESERVED 2025 <br> Vincent Dela Cruz</p>
+        </div>
+    </footer>
+    <script>
+        let lastSortedColumn = -1;
+        let lastSortDirection = "asc"; // Default to ascending order
+
+        function sortTable(columnIndex) {
+            var table = document.getElementById("appointmentTable");
+            var rows = table.rows;
+            var switching = true;
+            var dir = lastSortedColumn === columnIndex && lastSortDirection === "asc" ? "desc" : "asc"; // Toggle direction
+
+            // Reset all columns' arrow indicators
+            Array.from(table.querySelectorAll('th')).forEach(th => th.classList.remove('asc', 'desc'));
+
+            // Set arrow for the current sorted column
+            table.rows[0].cells[columnIndex].classList.add(dir);
+
+            // Loop until no switching is needed
+            while (switching) {
+                switching = false;
+                var rowsArray = Array.from(rows).slice(1); // Get rows except the header row
+
+                // Loop through all table rows
+                for (var i = 0; i < rowsArray.length - 1; i++) {
+                    var row1 = rowsArray[i];
+                    var row2 = rowsArray[i + 1];
+                    var cell1 = row1.cells[columnIndex];
+                    var cell2 = row2.cells[columnIndex];
+
+                    // Check if the rows should be switched based on the sorting direction
+                    var shouldSwitch = false;
+                    if (dir === "asc") {
+                        if (cell1.innerText.toLowerCase() > cell2.innerText.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir === "desc") {
+                        if (cell1.innerText.toLowerCase() < cell2.innerText.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldSwitch) {
+                    rowsArray[i].parentNode.insertBefore(rowsArray[i + 1], rowsArray[i]);
+                    switching = true;
+                } else {
+                    switching = false;
+                }
+            }
+
+            // Update the last sorted column and direction
+            lastSortedColumn = columnIndex;
+            lastSortDirection = dir; // Toggle the sort direction for the next click
+        }
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rural Health Unit I Appointment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            text-align: center;
+            background: url('bg.png') center/cover no-repeat;
+            /* Body background image */
+            min-height: 100vh;
+            /* Ensure the body fills the entire viewport */
+            color: #333;
+        }
+
+        .header {
+            background-color: #2E7D32;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header img {
+            height: 50px;
+            width: auto;
+            margin-left: 15px;
+        }
+
+        .header nav {
+            text-align: right;
+            flex-grow: 1;
+            animation: slideRightToLeft 1s ease-in-out;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+            display: inline-block;
+        }
+
+        .header a:hover {
+            color: #C8E6C9;
+            transform: scale(1.1);
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            background: url('bg.png') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(46, 125, 50, 0.7);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            position: relative;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .appointment-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s, background-color 0.3s;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .appointment-btn:hover {
+            transform: scale(1.1);
+            background-color: #388E3C;
+        }
+
+        .footer {
+            background-color: #2E7D32;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .footer p {
+            animation: slideUp 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideRightToLeft {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .services {
+            padding: 50px 20px;
+            color: #333;
+            background: rgba(46, 125, 50, 0.7);
+            /* Light white background with transparency */
+            min-height: 800px;
+            max-height: 1000px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .services-box {
+            background-color: white;
+            /* White background for the box */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            /* Make the box width responsive */
+            max-width: 1200px;
+            /* Maximum width of the box */
+        }
+
+        .services h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: white;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .service-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .service-box p {
+            background-color: #ffffff;
+            border: 2px solid #2E7D32;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1.2rem;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .service-box p strong {
+            font-weight: bold;
+            color: #2E7D32;
+        }
+
+        .service-box p:hover {
+            background-color: #E8F5E9;
+            transform: scale(1.05);
+        }
+
+
+        /* Style the form container */
+        form {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        /* Style labels */
+        label {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: block;
+            color: #333;
+        }
+
+        /* Style the select and input elements */
+        select,
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #2E7D32;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* Style for the textarea */
+        textarea {
+            resize: vertical;
+            /* Allow the textarea to be resized vertically */
+        }
+
+        /* Style for the submit button */
+        input[type="submit"] {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #388E3C;
+        }
+
+        /* Style the available slots text */
+        p {
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        /* Styling the heading with available slots */
+        h1 {
+            font-size: 2rem;
+            color: #2E7D32;
+            margin-bottom: 20px;
+        }
+
+        #reminder {
+            background-color: white;
+            /* White background */
+            padding: 20px;
+            max-width: 600px;
+            margin: 50px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Title style */
+        #reminder h1 {
+            color: black;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Paragraph text */
+        #reminder p {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Style for the list items */
+        #reminder li {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        /* Submit button styling */
+        #reminder input[type="submit"] {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        #reminder input[type="submit"]:hover {
+            background-color: #388E3C;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* General reset and font settings */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Style for the code container */
+        #code {
+            background-color: white;
+            /* White background */
+            padding: 30px;
+            max-width: 600px;
+            margin: 50px auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Title style */
+        #code h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Highlighting the instruction */
+        #code h1 div {
+            color: red;
+            font-weight: bolder;
+        }
+
+        /* Code section */
+        #code h3 {
+            font-size: 1.4rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        /* Styling the code */
+        #code h1:last-of-type {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2E7D32;
+            /* Green color for the code */
+            margin-top: 10px;
+        }
+
+        /* Hidden class (for hiding the div initially) */
+        .hidden {
+            display: none;
+        }
+
+        /* Make sure the code block stands out */
+        #code h1:last-of-type {
+            border: 2px solid #2E7D32;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="services">
+        <h1>Get Appointment</h1>
+        <div class="getappointment" id="getappointment">
+            <form>
+                <label for="service">Choose a service:</label>
+                <select id="service" name="service">
+                    <option value="checkup">Check Up</option>
+                    <option value="dentalcares">Dental Cares</option>
+                    <option value="animalbites">Animal Bites</option>
+                </select>
+                <br><br>
+                <label for="dateofschedule">Date of Schedule</label>
+                <input type="date" id="dateofschedule" name="dateofschedule">
+                <br><br>
+                <label for="timeofschedule">Time of Schedule:</label>
+                <select id="timeofschedule" name="timeofschedule">
+                    <option value="9">9:00 AM</option>
+                    <option value="10">10:00 AM</option>
+                    <option value="11">11:00 AM</option>
+                    <option value="2">2:00 PM</option>
+                    <option value="3">3:00 PM</option>
+                    <option value="4">4:00 PM</option>
+                </select>
+                <br><br>
+                <p>Available slots:</p>
+                <h1 style="color:black">69</h1>
+
+                <label for="message">Reason for Consulation</label><br>
+                <textarea id="message" name="message" rows="10" cols="50"
+                    placeholder="Write your message here..."></textarea>
+                <br><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
+        <div id="reminder" class="hidden content">
+            <form>
+                <h1 style="color: black;">Reminder</h1>
+                <p>Appointment System is a way for patients to avail a schedule for their own. However please take of
+                    note
+                    of following:</p><br>
+
+                <ol>
+                    <li>Patients can only make same appointment once a week.</li>
+                    <li>If want to reschedule do it in a following week not in the same week.</li>
+                    <li>There are only limited schedule slots per day.</li>
+                    <li>Please take a screenshot or take a note for the code and input it in the KIOSK provided in the
+                        facility</li>
+                    <li>Always follow the appointment schedule.</li>
+                </ol>
+
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
+        <div id="code" class="hidden">
+            <form>
+                <h1>PLEASE <div style="color: red; font-weight: bolder;">TAKE A SCREENSHOT OR TAKE NOTE OF THIS CODE
+                    </div>
+                    WHICH IT WILL BE USED IN THE KIOSK IN THE FACILITY</h1>
+
+                <h3>CODE</h3>
+                <h1>6942081800</h1>
+                <br>
+                <input type="submit" value="Home">
+            </form>
+        </div>
+    </div>
+    <footer>
+        <div class="footer">
+            <p>ALL RIGHTS RESERVED 2025 <br> Vincent Dela Cruz</p>
+        </div>
+    </footer>
+    <script>
+        // JavaScript to handle the submit action and show the new div
+        document.getElementById('getappointment').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Hide the form div
+            document.getElementById('getappointment').classList.add('hidden');
+
+            // Show the content div
+            document.getElementById('reminder').classList.remove('hidden');
+        });
+
+        document.getElementById('reminder').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Hide the form div
+            document.getElementById('reminder').classList.add('hidden');
+
+            // Show the content div
+            document.getElementById('code').classList.remove('hidden');
+        });
+        document.getElementById('code').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            window.location.href = '/kiosk/kioskmain.html';
+        });
+    </script>
+
+</body>
+
+</html>
