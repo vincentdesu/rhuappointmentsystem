@@ -101,13 +101,15 @@
     }
 
     /* Image inside the Input Code button */
-    .input-code .button-img,
-    .create-appointment .button-img {
-        width: 500px;
-        /* Adjust the image size */
-        height: auto;
-        margin-bottom: 10px;
-        /* Space between the image and text */
+
+    /* Ensure all button images have the same size */
+    .button-img {
+        width: 100px;
+        /* Set a fixed width */
+        height: 100px;
+        /* Set a fixed height */
+        object-fit: contain;
+        /* Ensures the image fits without distortion */
     }
 
     .create-appointment .button-img {
@@ -142,6 +144,10 @@
             width: 40px;
         }
     }
+
+    a {
+        text-decoration: none;
+    }
 </style>
 
 <body>
@@ -154,12 +160,10 @@
 
         <!-- Buttons -->
         <div class="button-container">
-            <a href=""><button class="input-code">
-                    <img src="barcode.png" alt="Barcode Icon" class="button-img">
+            <a href="kioskinput.php"><button class="input-code">
                     Input Code
                 </button></a>
             <a href="kiosk2.html"><button class="create-appointment">
-                    <img src="pen.png" alt="Barcode Icon" class="button-img">
                     Create Appointment
                 </button></a>
         </div>
