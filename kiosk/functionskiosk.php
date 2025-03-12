@@ -211,25 +211,45 @@ Class aSystem{
         $availableSlots = $totalSlots - $result['count'];
         return $availableSlots;
     }
-    public function appoint(){
-        if(isset($_POST['getappoint'])){
-            $username = $_POST['username'];
+    public function appoint() {
+        if (isset($_POST['getappoint'])) {
             $fullname = $_POST['fullname'];
+            $contact = $_POST['contact'];
             $service = $_POST['service'];
             $date = $_POST['dateofschedule'];
             $time = $_POST['timeofschedule'];
             $reason = $_POST['message'];
             $code = $_POST['randomCode'];
-
-
+            $type = 'kiosk';
+    
             $connection = $this->openConnection();
-            $stmt = $connection->prepare("INSERT INTO appointments(`username`, `fullname`, `service`, `schedule_date`, `time_slot`, `reason`, `code`)VALUES(?,?,?,?,?,?,?)");
-            $stmt->execute([$username, $fullname, $service, $date, $time, $reason, $code]);
-            echo '<script>alert("Appointed Successfully")</script>';
-            echo '<script>window.location.href="get app2.php"</script>';
+    
+            try {
+                // Start transaction
+                $connection->beginTransaction();
+    
+                // Insert into appointments table
+                $stmt = $connection->prepare("INSERT INTO appointments(`contact`, `fullname`, `service`, `schedule_date`, `time_slot`, `reason`, `code`, `type`) 
+                                              VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$contact, $fullname, $service, $date, $time, $reason, $code, $type]);
+    
+                // Update the slots table: Increment slot count for the same service and date
+                $updateStmt = $connection->prepare("UPDATE slots SET booked_count = booked_count + 1, total_slots = total_slots - 1 WHERE service = ? AND schedule_date = ?");
+                $updateStmt->execute([$service, $date]);
+    
+                // Commit transaction
+                $connection->commit();
+    
+                echo '<script>alert("Appointed Successfully");</script>';
+                echo '<script>window.location.href="kioskmain.html";</script>';
+            } catch (Exception $e) {
+                // Rollback in case of error
+                $connection->rollBack();
+                echo '<script>alert("Failed to book appointment: ' . $e->getMessage() . '");</script>';
+            }
+        }
+    }
 
-    }
-    }
     public function show_appoints(){
         $connection = $this->openConnection();
         

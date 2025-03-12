@@ -1,13 +1,13 @@
 <?php
     require_once('functions.php');
-    $functions->login();
+
     if (isset($_SESSION['userdata'])) {
         echo '<script>
             window.location.href = "home.php";
         </script>';
         exit(); // Stop execution after redirect
     }
-    
+    $functions->find_username();
 ?>
 
 <!DOCTYPE html>
@@ -97,26 +97,21 @@
 </style>
 
 <body>
-    <div class="container">
+    <div class="container" id = "logincall">
         <div class="row">
             <div class="col">
                 <div id="login" name="login">
-                    <h1 class="logintitle text-center">LOGIN</h1>
+                    <h1 class="logintitle text-center">Reset password</h1>
                     </br>
                     <form action = "" method = "POST">
-                        <label for="username">Username</label><br>
+                        <label for="username">Enter username</label><br>
                         <input type="text" id="username" name="username"><br>
-                        <label for="password">Password</label><br>
-                        <input type="password" id="password" name="password"><br><br>
 
-                        <div class="forgot-password">
-                            <a href="forgotpassword.php">Forgot Password?</a>
-                        </div><br>
-
-                        <input type="submit" value="Login" name = "login">
+                        <br>
+                        <input type="submit" value="Find" name = "find">
                     </form>
                     </br></br>
-                    <p class="dont text-center">Don't have an account? <a href="register.php">Sign up here!</a></p>
+                    <p class="dont text-center">Did you remember your password? <a href="login.php">Login here!</a></p>
                 </div>
             </div>
             <div class="col text-center">
@@ -130,7 +125,40 @@
             </div>
         </div>
     </div>
+    <!-- <div class="container" id = "codecall" hidden>
+        <div class="row">
+            <div class="col">
+                <div id="login" name="login">
+                    <h1 class="logintitle text-center">Reset password</h1>
+                    </br>
+                    <form action = "" method = "POST">
+                        <label for="username">Enter username</label><br>
+                        <input type="text" id="username" name="username"><br>
 
+                        <br>
+                        <input type="submit" value="Login" name = "login" onclick="showReminder()">
+                    </form>
+                    </br></br>
+                    <p class="dont text-center">Did you remember your password? <a href="login.php">Login here!</a></p>
+                </div>
+            </div>
+            <div class="col text-center">
+                <div name="logo">
+                    <img src="456824869_912959037542938_2249134743186522110_n-removebg-preview.png" height="50%"
+                        width="50%">
+                    <h1 style="color: white; font-size: 36px; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">Rural Health
+                        Unit I <br> Appointment System</h1>
+
+                </div>
+            </div>
+        </div>
+    </div> -->
 </body>
+<script>
+    function showReminder() {
+        document.getElementById("logincall").classList.add("hidden");
+        document.getElementById("codecall").classList.remove("hidden");
 
+    }
+</script>
 </html>

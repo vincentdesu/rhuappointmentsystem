@@ -1,13 +1,14 @@
 <?php
     require_once('functions.php');
-    $functions->login();
+
     if (isset($_SESSION['userdata'])) {
         echo '<script>
             window.location.href = "home.php";
         </script>';
         exit(); // Stop execution after redirect
     }
-    
+    $functions->find_username();
+    $functions->reset_password();
 ?>
 
 <!DOCTYPE html>
@@ -97,26 +98,23 @@
 </style>
 
 <body>
-    <div class="container">
+    <div class="container" id = "logincall">
         <div class="row">
             <div class="col">
                 <div id="login" name="login">
-                    <h1 class="logintitle text-center">LOGIN</h1>
+                    <h1 class="logintitle text-center">Reset password</h1>
                     </br>
                     <form action = "" method = "POST">
-                        <label for="username">Username</label><br>
-                        <input type="text" id="username" name="username"><br>
-                        <label for="password">Password</label><br>
-                        <input type="password" id="password" name="password"><br><br>
-
-                        <div class="forgot-password">
-                            <a href="forgotpassword.php">Forgot Password?</a>
-                        </div><br>
-
-                        <input type="submit" value="Login" name = "login">
+                        <input type = "hidden" name = "username" value = "<?= $_SESSION['username'] ?>">
+                        <label for="new_password">New Password</label><br>
+                        <input type="password" id="new_password" name="new_password"><br>
+                        <label for="confirm_password">Confirm Password</label><br>
+                        <input type="password" id="confirm_password" name="confirm_password"><br>
+                        <br>
+                        <input type="submit" value="Reset" name = "reset">
                     </form>
                     </br></br>
-                    <p class="dont text-center">Don't have an account? <a href="register.php">Sign up here!</a></p>
+                    <p class="dont text-center">Did you remember your password? <a href="login.php">Login here!</a></p>
                 </div>
             </div>
             <div class="col text-center">
@@ -132,5 +130,4 @@
     </div>
 
 </body>
-
 </html>
