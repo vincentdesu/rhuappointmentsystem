@@ -8,6 +8,32 @@ if (isset($_GET['submit'])) {
 
 
 
+// Database connection
+$pdo = new PDO("mysql:host=localhost;dbname=appointmentsystem", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+// Number of records per page
+$itemsPerPage = 10;
+
+// Get the current page from URL, default to 1
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$page = max($page, 1); // Ensure page is at least 1
+
+// Calculate the offset for the SQL query
+$offset = ($page - 1) * $itemsPerPage;
+
+// Fetch total number of records
+$stmt = $pdo->query("SELECT COUNT(*) FROM appointments WHERE status = 'completed'");
+$totalRows = $stmt->fetchColumn();
+$totalPages = ceil($totalRows / $itemsPerPage);
+
+// Fetch paginated data
+$stmt = $pdo->prepare("SELECT * FROM appointments WHERE status = 'completed' ORDER BY schedule_date DESC LIMIT :offset, :items");
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->bindValue(':items', $itemsPerPage, PDO::PARAM_INT);
+$stmt->execute();
+$services['appointments'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 // $connection = new PDO("mysql:host=localhost;dbname=appointmentsystem", "root", "");
 
 // $query = $connection->query("SELECT service, COUNT(*) as total FROM appointments WHERE status = 'Completed' GROUP BY service");
@@ -37,8 +63,10 @@ if (isset($_GET['submit'])) {
     </nav>
     
     <div class="d-flex">
-        <nav class="bg-dark text-white p-3" style="width: 250px; min-height: 100vh;">
+    <nav class="bg-dark text-white p-3 min-vh-100 d-flex flex-column" style="width: 250px;">
+
             <ul class="nav flex-column">
+                <li class="nav-item"><a href="dashboard.php" class="nav-link text-white">Dashboard</a></li>
                 <li class="nav-item"><a href="appointment.php" class="nav-link text-white">Appointments</a></li>
                 <li class="nav-item"><a href="ad pending.php" class="nav-link text-white">Pending Accounts</a></li>
                 <li class="nav-item"><a href="ad available serv.php" class="nav-link text-white">Available Services</a></li>
@@ -74,7 +102,13 @@ if (isset($_GET['submit'])) {
                 </div>
             </form>
             
-            <canvas id="reportChart" class="my-4"></canvas>
+            <div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4"> <!-- Adjust column size -->
+            <canvas id="reportChart" class="my-4 w-100"></canvas>
+        </div>
+    </div>
+</div>
             
             <table class="table table-striped table-bordered">
                 <thead class="table-success">
@@ -87,8 +121,8 @@ if (isset($_GET['submit'])) {
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($services['appointments'] as $service) { ?>
-                    <tr>
+                    <?php foreach ($services['appointments'] as $service) { ?>
+                        <tr>
                             <td><?= htmlspecialchars($service['fullname']) ?></td>
                             <td><?= htmlspecialchars($service['schedule_date']) ?></td>
                             <td><?= htmlspecialchars($service['time_slot']) ?></td>
@@ -97,7 +131,28 @@ if (isset($_GET['submit'])) {
                         </tr>
                     <?php } ?>
                 </tbody>
+
             </table>
+            <nav>
+    <ul class="pagination justify-content-center">
+        <?php if ($page > 1): ?>
+            <li class="page-item">
+                <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
+            </li>
+        <?php endif; ?>
+
+        <li class="page-item disabled">
+            <span class="page-link">Page <?= $page ?> of <?= $totalPages ?></span>
+        </li>
+
+        <?php if ($page < $totalPages): ?>
+            <li class="page-item">
+                <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+            </li>
+        <?php endif; ?>
+    </ul>
+</nav>
+
             <div class="text-center">
                 <button class="btn btn-primary" onclick="generatePDF()">Generate PDF</button>
             </div>

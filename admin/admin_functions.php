@@ -319,7 +319,7 @@ Class aSystem{
             $connection = $this->openConnection();
             
             // Update existing appointment based on ID
-            $stmt = $connection->prepare("DELETE FROM appointments WHERE id = ?");
+            $stmt = $connection->prepare("UPDATE appointments SET status = 'Cancelled' WHERE id = ?");
             $stmt->execute([$id]);
     
             echo '<script>alert("Deleted Successfully")</script>';
@@ -515,6 +515,55 @@ Class aSystem{
     
             echo '<script>alert("Added Successfully")</script>';
             echo '<script>window.location.href="ad services.php"</script>';
+        }
+    }
+
+    public function count_users(){
+        $connection = $this->openConnection();
+        $stmt = $connection->prepare("SELECT COUNT(*) as total_users FROM users"); 
+        $stmt->execute();
+        $result = $stmt->fetch();
+        
+        if ($result) {
+            return $result['total_users'];
+        } else {
+            return 0;
+        }
+    } 
+    public function count_completed(){
+        $connection = $this->openConnection();
+        $stmt = $connection->prepare("SELECT COUNT(*) as total_complete FROM appointments WHERE status = 'Completed'"); 
+        $stmt->execute();
+        $result = $stmt->fetch();
+        
+        if ($result) {
+            return $result['total_complete'];
+        } else {
+            return 0;
+        }
+    } 
+    public function count_ongoing(){
+        $connection = $this->openConnection();
+        $stmt = $connection->prepare("SELECT COUNT(*) as total_ongoing FROM appointments WHERE status = 'Waiting'"); 
+        $stmt->execute();
+        $result = $stmt->fetch();
+        
+        if ($result) {
+            return $result['total_ongoing'];
+        } else {
+            return 0;
+        }
+    } 
+    public function count_cancelled(){
+        $connection = $this->openConnection();
+        $stmt = $connection->prepare("SELECT COUNT(*) as total_cancelled FROM appointments WHERE status = 'Cancelled'"); 
+        $stmt->execute();
+        $result = $stmt->fetch();
+        
+        if ($result) {
+            return $result['total_cancelled'];
+        } else {
+            return 0;
         }
     }
     

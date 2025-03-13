@@ -29,8 +29,9 @@ $admin_functions->add_services();
     </nav>
 
     <div class="d-flex">
-        <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
+    <nav class="bg-dark text-white p-3 min-vh-100 d-flex flex-column" style="width: 250px;">
             <ul class="nav flex-column">
+                <li class="nav-item"><a href="dashboard.php" class="nav-link text-white">Dashboard</a></li>
                 <li class="nav-item"><a href="appointment.php" class="nav-link text-white">Appointments</a></li>
                 <li class="nav-item"><a href="ad pending.php" class="nav-link text-white">Pending Accounts</a></li>
                 <li class="nav-item"><a href="ad available serv.php" class="nav-link text-white active bg-primary ">Available Services</a></li>

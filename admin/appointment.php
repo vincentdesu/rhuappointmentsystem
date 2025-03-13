@@ -9,7 +9,22 @@ if (isset($_GET['submit'])) {
     $lists = $admin_functions->show_appoints();
 }
 
+// Define the number of records per page
+$records_per_page = 10;
 
+// Get the current page number from the GET request (default to 1 if not set)
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+
+// Calculate the offset for the database query
+$offset = ($page - 1) * $records_per_page;
+
+// Fetch the total number of records
+$total_records = count($lists); // Assuming $lists contains all data
+$total_pages = ceil($total_records / $records_per_page);
+
+// Slice the array to get only the current page's data
+$current_page_lists = array_slice($lists, $offset, $records_per_page);
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +36,9 @@ if (isset($_GET['submit'])) {
     <title>Rural Health Unit</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
 
+</style>
 <body>
     <div class="container-fluid p-0">
         <nav class="navbar navbar-expand-lg navbar-dark bg-success">
@@ -35,94 +52,116 @@ if (isset($_GET['submit'])) {
         </nav>
 
         <div class="d-flex">
-            <nav class="bg-dark text-white p-3 vh-100" style="width: 250px;">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a href="appointment.php" class="nav-link text-white active bg-primary">Appointments</a></li>
-                    <li class="nav-item"><a href="ad pending.php" class="nav-link text-white">Pending Accounts</a></li>
-                    <li class="nav-item"><a href="ad available serv.php" class="nav-link text-white">Available Services</a></li>
-                    <li class="nav-item"><a href="ad sched.php" class="nav-link text-white">Schedules</a></li>
-                    <li class="nav-item"><a href="ad services.php" class="nav-link text-white">Services</a></li>
-                    <li class="nav-item"><a href="ad report.php" class="nav-link text-white">Report</a></li>
-                    <li class="nav-item"><a href="ad sched and slot.php" class="nav-link text-white">Schedules and Slots</a></li>
-                </ul>
-            </nav>
+        <nav class="bg-dark text-white p-3 min-vh-100 d-flex flex-column" style="width: 250px;">
+    <ul class="nav flex-column flex-grow-1">
+        <li class="nav-item"><a href="dashboard.php" class="nav-link text-white">Dashboard</a></li>
+        <li class="nav-item"><a href="appointment.php" class="nav-link text-white active bg-primary">Appointments</a></li>
+        <li class="nav-item"><a href="ad pending.php" class="nav-link text-white">Pending Accounts</a></li>
+        <li class="nav-item"><a href="ad available serv.php" class="nav-link text-white">Available Services</a></li>
+        <li class="nav-item"><a href="ad sched.php" class="nav-link text-white">Schedules</a></li>
+        <li class="nav-item"><a href="ad services.php" class="nav-link text-white">Services</a></li>
+        <li class="nav-item"><a href="ad report.php" class="nav-link text-white">Report</a></li>
+        <li class="nav-item"><a href="ad sched and slot.php" class="nav-link text-white">Schedules and Slots</a></li>
+    </ul>
+</nav>
 
+        
             <div class="container-fluid p-4">
-                <h2>Ongoing Appointments</h2>
-                <div class="card p-4">
-                    <form class="row g-3" method = "GET">
-                        <div class="col-md-4">
-                            <label for="search" class="form-label">Search</label>
-                            <input type="text" id="search" name="search" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="service" class="form-label">Choose a service:</label>
-                            <select id="service" name="service" class="form-select">
-                                <option value="checkup">Check Up</option>
-                                <option value="dentalcares">Dental Cares</option>
-                                <option value="animalbites">Animal Bites</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="start-date" class="form-label">Date:</label>
-                            <input type="date" id="start-date" name="start-date" class="form-control">
-                        </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-success" name = "submit">Submit</button>
-                        </div>
-                    </form>
-                </div>
+    <h2>Ongoing Appointments</h2>
+    <div class="card p-4">
+        <form class="row g-3" method="GET">
+            <div class="col-md-4">
+                <label for="search" class="form-label">Search</label>
+                <input type="text" id="search" name="search" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="service" class="form-label">Choose a service:</label>
+                <select id="service" name="service" class="form-select">
+                    <option value="checkup">Check Up</option>
+                    <option value="dentalcares">Dental Cares</option>
+                    <option value="animalbites">Animal Bites</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="start-date" class="form-label">Date:</label>
+                <input type="date" id="start-date" name="start-date" class="form-control">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success" name="submit">Submit</button>
+            </div>
+        </form>
+    </div>
 
-                <div class="table-responsive mt-4">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-success">
-                            <tr>
-                                <th>Full Name</th>
-                                <th>Service</th>
-                                <th>Date Schedule</th>
-                                <th>Time Schedule</th>
-                                <th>Message</th>
-                                <th>Code</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($lists as $list) { ?>
-                            <tr>
-                                <td><?= $list['fullname'] ?></td>
-                                <td><?= $list['service']; ?></td>
-                                <td><?= $list['schedule_date']; ?></td>
-                                <td><?= $list['time_slot']; ?></td>
-                                <td><?= $list['reason']; ?></td>
-                                <td><?= $list['code']; ?></td>
-                                <td>
-                                    <!-- Edit Button (Triggers Edit Modal) -->
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" 
-                                        data-bs-target="#editModal"
-                                        data-id="<?= $list['id']; ?>"
-                                        data-fullname="<?= $list['fullname']; ?>"
-                                        data-service="<?= $list['service']; ?>"
-                                        data-schedule="<?= $list['schedule_date']; ?>"
-                                        data-timeslot="<?= $list['time_slot']; ?>"
-                                        data-reason="<?= $list['reason']; ?>"
-                                        data-code="<?= $list['code']; ?>">
-                                        Edit
-                                    </button>
+    <div class="table-responsive mt-4">
+        <table class="table table-striped table-hover">
+            <thead class="table-success">
+                <tr>
+                    <th>Full Name</th>
+                    <th>Service</th>
+                    <th>Date Schedule</th>
+                    <th>Time Schedule</th>
+                    <th>Message</th>
+                    <th>Code</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($current_page_lists as $list) { ?>
+                <tr>
+                    <td><?= htmlspecialchars($list['fullname']) ?></td>
+                    <td><?= htmlspecialchars($list['service']) ?></td>
+                    <td><?= htmlspecialchars($list['schedule_date']) ?></td>
+                    <td><?= htmlspecialchars($list['time_slot']) ?></td>
+                    <td><?= htmlspecialchars($list['reason']) ?></td>
+                    <td><?= htmlspecialchars($list['code']) ?></td>
+                    <td>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" 
+                            data-bs-target="#editModal"
+                            data-id="<?= $list['id']; ?>"
+                            data-fullname="<?= htmlspecialchars($list['fullname']); ?>"
+                            data-service="<?= htmlspecialchars($list['service']); ?>"
+                            data-schedule="<?= htmlspecialchars($list['schedule_date']); ?>"
+                            data-timeslot="<?= htmlspecialchars($list['time_slot']); ?>"
+                            data-reason="<?= htmlspecialchars($list['reason']); ?>"
+                            data-code="<?= htmlspecialchars($list['code']); ?>">
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" 
+                            data-bs-target="#deleteModal"
+                            data-id="<?= $list['id']; ?>"
+                            data-fullname="<?= htmlspecialchars($list['fullname']); ?>">
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
 
-                                    <!-- Remove Button (Triggers Delete Modal) -->
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" 
-                                        data-bs-target="#deleteModal"
-                                        data-id="<?= $list['id']; ?>"
-                                        data-fullname="<?= $list['fullname']; ?>">
-                                        Remove
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-
-                        <!-- Edit Modal -->
-                        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            <?php if ($page > 1) { ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page - 1; ?>">Previous</a>
+                </li>
+            <?php } ?>
+            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                <li class="page-item <?= ($i == $page) ? 'active' : ''; ?>">
+                    <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                </li>
+            <?php } ?>
+            <?php if ($page < $total_pages) { ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                </li>
+            <?php } ?>
+        </ul>
+    </nav>
+</div>
+ <!-- Edit Modal -->
+ <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -166,8 +205,8 @@ if (isset($_GET['submit'])) {
                             </div>
                         </div>
 
-                        <!-- Delete Confirmation Modal -->
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">

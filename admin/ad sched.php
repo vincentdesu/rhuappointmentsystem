@@ -32,6 +32,7 @@ $admin_functions->sched_add();
             <!-- Sidebar -->
         <div class="bg-dark text-white p-3" style="width: 250px; height: 100vh;">
             <ul class="nav flex-column">
+                <li class="nav-item"><a href="dashboard.php" class="nav-link text-white">Dashboard</a></li>
                 <li class="nav-item"><a href="appointment.php" class="nav-link text-white">Appointments</a></li>
                 <li class="nav-item"><a href="ad pending.php" class="nav-link text-white">Pending Accounts</a></li>
                 <li class="nav-item"><a href="ad available serv.php" class="nav-link text-white">Available Services</a></li>
