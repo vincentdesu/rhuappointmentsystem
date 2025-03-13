@@ -15,6 +15,29 @@ if (!isset($_SESSION['userdata']) || empty($_SESSION['userdata'])) {
     </script>';
     exit(); // Stop execution after redirect
 }
+
+$pdo = new PDO("mysql:host=localhost;dbname=appointmentsystem", "root", "");
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$itemsPerPage = 10;
+
+// Get current page from URL, default to 1
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$page = max($page, 1); // Ensure page is at least 1
+
+// Calculate offset
+$offset = ($page - 1) * $itemsPerPage;
+
+// Fetch total number of records
+$stmt = $pdo->query("SELECT COUNT(*) FROM appointments");
+$totalRows = $stmt->fetchColumn();
+$totalPages = ceil($totalRows / $itemsPerPage);
+
+// Fetch paginated data
+$stmt = $pdo->prepare("SELECT * FROM appointments ORDER BY schedule_date DESC LIMIT :offset, :items");
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->bindValue(':items', $itemsPerPage, PDO::PARAM_INT);
+$stmt->execute();
+$lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -344,14 +367,14 @@ if (!isset($_SESSION['userdata']) || empty($_SESSION['userdata'])) {
             <?php foreach($lists as $list){ ?>
                 
                 <tr>
-                    <td><?= $list['fullname'] ?></td>
-                    <td><?= $list['service']; ?></td>
-                    <td><?= $list['schedule_date']; ?></td>
-                    <td><?= $list['time_slot']; ?></td>
-                    <td><?= $list['reason']; ?></td>
-                    <td><?= $list['code']; ?></td>
-                    <td><?= $list['status']; ?></td>
-
+                    <td><?= htmlspecialchars($list['fullname']); ?></td>
+                    <td><?= htmlspecialchars($list['service']); ?></td>
+                    <td><?= htmlspecialchars($list['schedule_date']); ?></td>
+                    <td><?= htmlspecialchars($list['time_slot']); ?></td>
+                    <td><?= htmlspecialchars($list['reason']); ?></td>
+                    <td><?= htmlspecialchars($list['code']); ?></td>
+                    <td><?= htmlspecialchars($list['status']); ?></td>
+                
                     <td>
                     <?php $isCompleted = ($list['status'] === 'Completed') ? 'disabled' : ''; ?>
 
@@ -458,9 +481,28 @@ if (!isset($_SESSION['userdata']) || empty($_SESSION['userdata'])) {
 
 
             </tbody>
-        </table>
+        </table><br><br>
+        <nav>
+        <ul class="pagination justify-content-center">
+            <?php if ($page > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page - 1 ?>">Previous</a>
+                </li>
+            <?php endif; ?>
 
+            <li class="page-item disabled">
+                <span class="page-link">Page <?= $page ?> of <?= $totalPages ?></span>
+            </li>
+
+            <?php if ($page < $totalPages): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page + 1 ?>">Next</a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>  
     </div>
+
     <footer>
         <div class="footer">
             <p>ALL RIGHTS RESERVED 2025</p>

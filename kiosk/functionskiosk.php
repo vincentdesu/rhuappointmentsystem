@@ -234,7 +234,7 @@ Class aSystem{
                 $stmt->execute([$contact, $fullname, $service, $date, $time, $reason, $code, $type]);
     
                 // Update the slots table: Increment slot count for the same service and date
-                $updateStmt = $connection->prepare("UPDATE slots SET booked_count = booked_count + 1, total_slots = total_slots - 1 WHERE service = ? AND schedule_date = ?");
+                $updateStmt = $connection->prepare("UPDATE slots SET booked_count = booked_count + 1 WHERE service = ? AND schedule_date = ?");
                 $updateStmt->execute([$service, $date]);
     
                 // Commit transaction
