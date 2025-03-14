@@ -185,20 +185,53 @@ Class aSystem{
             $reason = $_POST['reason'];
     
             $connection = $this->openConnection();
-            $stmt = $connection->prepare("UPDATE appointments SET fullname=?, service=?, schedule_date=?, time_slot=?, reason=? WHERE id=?"); // ✅ Removed extra comma
-            $stmt->execute([$fullname, $service, $schedule_date, $time_slot, $reason, $id]);
+            
+            // Start a transaction for data consistency
+            $connection->beginTransaction();
     
-            header("Location: get app2.php"); // Redirect back
-            exit(); // Ensure script stops execution after redirect
+            try {
+                // 🔹 Step 1: Retrieve previous appointment details
+                $stmt = $connection->prepare("SELECT service, schedule_date, time_slot FROM appointments WHERE id = ?");
+                $stmt->execute([$id]);
+                $previousAppointment = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+                if (!$previousAppointment) {
+                    throw new Exception("Appointment not found.");
+                }
+    
+                // 🔹 Step 2: Update appointment details
+                $stmt = $connection->prepare("UPDATE appointments SET fullname=?, service=?, schedule_date=?, time_slot=?, reason=? WHERE id=?");
+                $stmt->execute([$fullname, $service, $schedule_date, $time_slot, $reason, $id]);
+    
+                // 🔹 Step 3: Decrease booked_count for the previous slot
+                $stmt = $connection->prepare("UPDATE slots SET booked_count = booked_count - 1 WHERE service = ? AND schedule_date = ? AND time_slot = ?");
+                $stmt->execute([$previousAppointment['service'], $previousAppointment['schedule_date'], $previousAppointment['time_slot']]);
+    
+                // 🔹 Step 4: Increment booked_count for the new slot
+                $stmt = $connection->prepare("UPDATE slots SET booked_count = booked_count + 1 WHERE service = ? AND schedule_date = ? AND time_slot = ?");
+                $stmt->execute([$service, $schedule_date, $time_slot]);
+    
+                // Commit the transaction
+                $connection->commit();
+                
+                // Redirect back after successful update
+                header("Location: get app2.php");
+                exit();
+            } catch (Exception $e) {
+                // Rollback in case of an error
+                $connection->rollBack();
+                echo "Error: " . $e->getMessage();
+            }
         }
     }
+    
     public function remove_appointment(){
         if(isset($_POST['delete'])){
             $id = $_POST['id'];
             
             $connection = $this->openConnection();
 
-            $stmt = $connection->prepare("DELETE FROM appointments WHERE id=?");
+            $stmt = $connection->prepare("UPDATE appointments SET status = 'Cancelled' WHERE id = ?");          
             $stmt->execute([$id]);
         
             header("Location: get app2.php"); // Redirect back

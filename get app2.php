@@ -28,16 +28,19 @@ $page = max($page, 1); // Ensure page is at least 1
 $offset = ($page - 1) * $itemsPerPage;
 
 // Fetch total number of records
-$stmt = $pdo->query("SELECT COUNT(*) FROM appointments");
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM appointments WHERE username = :username");
+$stmt->execute(['username' => $userdata['username']]);
 $totalRows = $stmt->fetchColumn();
 $totalPages = ceil($totalRows / $itemsPerPage);
 
 // Fetch paginated data
-$stmt = $pdo->prepare("SELECT * FROM appointments ORDER BY schedule_date DESC LIMIT :offset, :items");
+$stmt = $pdo->prepare("SELECT * FROM appointments WHERE username = :username ORDER BY schedule_date DESC LIMIT :offset, :items");
+$stmt->bindValue(':username', $userdata['username'], PDO::PARAM_STR);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':items', $itemsPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -376,7 +379,8 @@ $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($list['status']); ?></td>
                 
                     <td>
-                    <?php $isCompleted = ($list['status'] === 'Completed') ? 'disabled' : ''; ?>
+                    <?php $isCompleted = ($list['status'] === 'Completed' || $list['status'] === 'Cancelled' || strtotime($list['schedule_date']) < strtotime('today')) ? 'disabled' : ''; ?>
+
 
                         <!-- Edit Button -->
                         <button type="button" class="btn btn-success edit-btn" 
@@ -435,7 +439,8 @@ $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     <option value="16">4:00 PM</option>
                                                 </select>
                                             </div>
-
+                                            <p>Available slots:</p>
+                                            <h1 id = "availableSlots" style="color:black"></h1>
 
                                             <div class="mb-3">
                                                 <label class="form-label">Reason</label>
@@ -454,7 +459,7 @@ $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <button type="button" class="btn btn-danger delete-btn" 
                 data-id="<?= $list['id'] ?>"
                 data-bs-toggle="modal" data-bs-target="#deleteModal"
-                <?= $isCompleted; ?>>Remove</button>
+                <?= $isCompleted; ?>>Cancel</button>
                         <!-- Delete Modal -->
                         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -464,10 +469,10 @@ $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Are you sure you want to delete this appointment?</p>
+                                        <p>Are you sure you want to cancel this appointment?</p>
                                         <form action="" method="POST">
                                             <input type="hidden" id="delete-id" name="id">
-                                            <button type="submit" class="btn btn-danger" name = "delete">Delete</button>
+                                            <button type="submit" class="btn btn-danger" name = "delete">Confirm</button>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                         </form>
                                     </div>
@@ -509,6 +514,46 @@ $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </footer>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let serviceSelect = document.getElementById("edit-service");
+            let dateInput = document.getElementById("edit-schedule");
+            let timeSelect = document.getElementById("edit-time");
+            let availableSlots = document.getElementById("availableSlots");
+
+            function fetchAvailableSlots() {
+                let selectedService = serviceSelect.value;
+                let selectedDate = dateInput.value;
+                let selectedTime = timeSelect.value;
+
+                console.log("Fetching slots for:", selectedService, selectedDate, selectedTime); // Debugging
+
+                if (selectedService && selectedDate && selectedTime) {
+                    fetch(`get_available_slots.php?service=${selectedService}&date=${selectedDate}&time=${selectedTime}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Received data:", data); // Debugging
+                            availableSlots.textContent = data.slotCount; // Update slot count
+                        })
+                        .catch(error => {
+                            console.error("Error fetching available slots:", error);
+                            availableSlots.textContent = "Error loading slots";
+                        });
+                } else {
+                    availableSlots.textContent = "-"; // Reset if fields are empty
+                }
+            }
+
+            // Attach event listeners
+            serviceSelect.addEventListener("change", fetchAvailableSlots);
+            dateInput.addEventListener("change", fetchAvailableSlots);
+            timeSelect.addEventListener("change", fetchAvailableSlots);
+
+            // Fetch slots when modal opens
+            $('#editModal').on('shown.bs.modal', function () {
+                fetchAvailableSlots();
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function () {
             // Edit Modal
             var editModal = document.getElementById("editModal");

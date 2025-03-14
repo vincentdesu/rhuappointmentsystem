@@ -11,8 +11,8 @@
 // if ($currentDate === $targetDate) {
 //     triggerFunction();
 // }
-$mobile = '09190917973';
-$msg = 'I just sent my first message with Semaphore';
+$mobile = '09103764645';
+$msg = 'Isang subok lang po sir haha';
 
       
 $ch = curl_init();

@@ -292,7 +292,7 @@ Class aSystem{
         }
     }
     public function edit_appointments(){
-        if(isset($_POST['save'])){ // Ensure an ID is provided for updating
+        if(isset($_POST['edit'])){
             $id = $_POST['id'];
             $fullname = $_POST['fullname'];
             $service = $_POST['service'];
@@ -302,12 +302,42 @@ Class aSystem{
     
             $connection = $this->openConnection();
             
-            // Update existing appointment based on ID
-            $stmt = $connection->prepare("UPDATE appointments SET fullname = ?, service = ?, schedule_date = ?, time_slot = ?, reason = ? WHERE id = ?");
-            $stmt->execute([$fullname, $service, $schedule_date, $time_slot, $reason, $id]);
+            // Start a transaction for data consistency
+            $connection->beginTransaction();
     
-            echo '<script>alert("Updated Successfully")</script>';
-            echo '<script>window.location.href="appointment.php"</script>';
+            try {
+                // 🔹 Step 1: Retrieve previous appointment details
+                $stmt = $connection->prepare("SELECT service, schedule_date, time_slot FROM appointments WHERE id = ?");
+                $stmt->execute([$id]);
+                $previousAppointment = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+                if (!$previousAppointment) {
+                    throw new Exception("Appointment not found.");
+                }
+    
+                // 🔹 Step 2: Update appointment details
+                $stmt = $connection->prepare("UPDATE appointments SET fullname=?, service=?, schedule_date=?, time_slot=?, reason=? WHERE id=?");
+                $stmt->execute([$fullname, $service, $schedule_date, $time_slot, $reason, $id]);
+    
+                // 🔹 Step 3: Decrease booked_count for the previous slot
+                $stmt = $connection->prepare("UPDATE slots SET booked_count = booked_count - 1 WHERE service = ? AND schedule_date = ? AND time_slot = ?");
+                $stmt->execute([$previousAppointment['service'], $previousAppointment['schedule_date'], $previousAppointment['time_slot']]);
+    
+                // 🔹 Step 4: Increment booked_count for the new slot
+                $stmt = $connection->prepare("UPDATE slots SET booked_count = booked_count + 1 WHERE service = ? AND schedule_date = ? AND time_slot = ?");
+                $stmt->execute([$service, $schedule_date, $time_slot]);
+    
+                // Commit the transaction
+                $connection->commit();
+                
+                // Redirect back after successful update
+                header("Location: get app2.php");
+                exit();
+            } catch (Exception $e) {
+                // Rollback in case of an error
+                $connection->rollBack();
+                echo "Error: " . $e->getMessage();
+            }
         }
     }
 
@@ -566,6 +596,65 @@ Class aSystem{
             return 0;
         }
     }
+
+    public function sendSMS() {
+        try {
+            // Database connection
+            $pdo = new PDO("mysql:host=localhost;dbname=your_database", "your_username", "your_password");
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+            // Get today's date
+            $today = date("Y-m-d");
+    
+            // Query to get contacts where schedule_date is today
+            $stmt = $pdo->prepare("SELECT contact FROM appointments WHERE schedule_date = :today");
+            $stmt->execute(['today' => $today]);
+    
+            // Fetch all contacts
+            $contacts = $stmt->fetchAll(PDO::FETCH_COLUMN); // Fetch as a simple array
+    
+            if (empty($contacts)) {
+                return "No appointments for today.";
+            }
+    
+            // Convert contacts array to JSON format for iTexMo API
+            $recipients = json_encode($contacts);
+    
+            // iTexMo API payload
+            $itexmo = array(
+                'Email' => 'sinampalukangtaengkalabaw@gmail.com',
+                'Password' => 'Tanginamo123',
+                'ApiCode' => 'TR-VINCE748469_EOP4A',
+                'Recipients' => $recipients,
+                'Message' => 'Reminder: You have an appointment scheduled for today.'
+            );
+    
+            // Initialize cURL
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://api.itexmo.com/api/broadcast"); // Use HTTPS
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($itexmo));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Follow redirects
+            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"); // Mimic browser
+    
+            // Execute cURL request
+            $response = curl_exec($ch);
+            
+            if (curl_errno($ch)) {
+                return "cURL error: " . curl_error($ch);
+            }
+    
+            curl_close($ch);
+            return $response;
+    
+        } catch (PDOException $pdoEx) {
+            return "Database error: " . $pdoEx->getMessage();
+        } catch (Exception $ex) {
+            return "Error: " . $ex->getMessage();
+        }
+    }
+    
     
 }
 $admin_functions = new aSystem();

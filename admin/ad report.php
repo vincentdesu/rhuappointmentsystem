@@ -23,12 +23,12 @@ $page = max($page, 1); // Ensure page is at least 1
 $offset = ($page - 1) * $itemsPerPage;
 
 // Fetch total number of records
-$stmt = $pdo->query("SELECT COUNT(*) FROM appointments WHERE status = 'completed'");
+$stmt = $pdo->query("SELECT COUNT(*) FROM appointments WHERE status = 'Completed'");
 $totalRows = $stmt->fetchColumn();
 $totalPages = ceil($totalRows / $itemsPerPage);
 
 // Fetch paginated data
-$stmt = $pdo->prepare("SELECT * FROM appointments WHERE status = 'completed' ORDER BY schedule_date DESC LIMIT :offset, :items");
+$stmt = $pdo->prepare("SELECT * FROM appointments WHERE status = 'Completed' ORDER BY schedule_date DESC LIMIT :offset, :items");
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':items', $itemsPerPage, PDO::PARAM_INT);
 $stmt->execute();
